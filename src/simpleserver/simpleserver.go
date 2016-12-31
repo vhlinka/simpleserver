@@ -6,13 +6,28 @@
 // --- temp - for eval only:
 // Google API key: AIzaSyCb6vGXygPRtFCePOoXpu221gl01ggBZqA
 //
+//
+// Thank you to : http://www.kaihag.com/https-and-go/ for tips on the following https code changes
+//
+//
+// for unsigned certs: openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout key.pem -out cert.pem
+//
+//
+// Need new cert/key from cert from authority for non-dev env...
+//
+//
 package main
 
 import (
 	"handlers"
-	"log"
+	//	"log"
 	"net/http"
 )
+
+func redirectToHttps(w http.ResponseWriter, r *http.Request) {
+	// Redirect the incoming HTTP request.
+	http.Redirect(w, r, "https://localhost:8001"+r.RequestURI, http.StatusMovedPermanently)
+}
 
 func main() {
 	http.HandleFunc("/", handlers.EchoHandler)
@@ -26,5 +41,11 @@ func main() {
 	http.HandleFunc("/crawl", handlers.Crawler)
 	http.HandleFunc("/outline", handlers.Outline)
 
-	log.Fatal(http.ListenAndServe("localhost:8000", nil))
+	//	log.Fatal(http.ListenAndServe("localhost:8000", nil))
+	//	log.Fatal(http.ListenAndServe(":8000", nil))
+	go http.ListenAndServeTLS(":8001", "/media/vhlinka/AddedSpace/securityKeys/cert.pem", "/media/vhlinka/AddedSpace/securityKeys/key.pem", nil)
+	// Start the HTTP server and redirect all incoming connections to HTTPS
+	http.ListenAndServe(":8000", http.HandlerFunc(redirectToHttps))
+
+	//	log.Fatal(http.ListenAndServeTLS(":8001", "/media/vhlinka/AddedSpace/securityKeys/cert.pem", "/media/vhlinka/AddedSpace/securityKeys/key.pem", nil))
 }
