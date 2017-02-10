@@ -41,8 +41,14 @@ func main() {
 	http.HandleFunc("/crawl", handlers.Crawler)
 	http.HandleFunc("/outline", handlers.Outline)
 
+	// AwareAbility Gateway handlers
+
+	http.HandleFunc("/SetToGatewayMode", handlers.EnterGatewayMode)
+	http.HandleFunc("/ExitGatewayMode", handlers.ExitGatewayMode)
+
 	//	log.Fatal(http.ListenAndServe("localhost:8000", nil))
 	//	log.Fatal(http.ListenAndServe(":8000", nil))
+	////	go http.ListenAndServeTLS(":8001", "/media/vhlinka/AddedSpace/securityKeys/cert.pem", "/media/vhlinka/AddedSpace/securityKeys/key.pem", nil)
 	go http.ListenAndServeTLS(":8001", "/media/vhlinka/AddedSpace/securityKeys/cert.pem", "/media/vhlinka/AddedSpace/securityKeys/key.pem", nil)
 	// Start the HTTP server and redirect all incoming connections to HTTPS
 	http.ListenAndServe(":8000", http.HandlerFunc(redirectToHttps))

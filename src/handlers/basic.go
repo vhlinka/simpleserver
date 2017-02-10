@@ -6,6 +6,7 @@ package handlers
 import (
 	"fmt"
 	"graphics"
+	"log"
 	"net/http"
 	"sync"
 )
@@ -24,7 +25,7 @@ func EchoCounter(w http.ResponseWriter, r *http.Request) {
 	mu.Lock()
 	fmt.Fprintf(w, "Count : %d\n", count)
 	mu.Unlock()
-
+	log.Print("EchoCounter Called.")
 }
 
 func EchoLissajous(w http.ResponseWriter, r *http.Request) {
